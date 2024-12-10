@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Analysis of Gold Price and Sentiment </title>
+    <link rel="stylesheet" href="sidebar.css" />
+
+    <link
+      href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css"
+      rel="stylesheet"
+    />
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <style>
+      /* CSS to center title at the top of the page */
+      .title-container {
+      /* Center the title horizontally */
+        font-size: 36px; /* Font size */
+        font-weight: bold; /* Make it bold */
+        color: #333; /* Text color */
+        margin-top: 20px; /* Add some space from the top */
+        text-align: center;
+      }
+
+      .data-link {
+        text-decoration: none;
+      }
+
+      /* Ensure content section has a proper margin */
+      .content-wrapper {
+        margin-left: 250px; /* Ensure content is not behind the sidebar */
+        padding: 20px;
+        transition: margin-left 0.3s ease; /* Smooth transition when sidebar is toggled */
+      }
+
+      /* If the sidebar is expanded, shift the content */
+      .sidebar.expand + .content-wrapper {
+        margin-left: 100px; /* Adjust based on your sidebar width */
+      }
+
+      /* Content container style */
+      .content-container {
+        display: none;
+        padding: 20px;
+        background-color: #f8f8f8;
+        border-radius: 10px;
+        margin: 40px auto;
+        margin-right: 100px;
+        width: 80%;
+        max-width: 1000px;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: all 0.6s ease;
+      }
+
+      .show-content {
+        display: block;
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      /* Add subtle animations */
+      .content-container p {
+        font-size: 18px;
+        line-height: 1.6;
+        color: #555;
+        text-align: justify;
+        transition: opacity 1s ease-in-out;
+      }
+    </style>
+    <style>
+      /* Enhanced CSS for Data Description Section */
+      .content-container {
+        display: none;
+        padding: 20px;
+        background-color: #f4f4f9;
+        border-radius: 10px;
+        margin: 20px auto;
+        width: 80%;
+        max-width: 1000px;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: all 0.6s ease;
+        margin-right: 100px;
+      }
+    
+      .show-content {
+        display: block;
+        opacity: 1;
+        transform: translateY(0);
+      }
+    
+      .content-container p {
+        font-size: 18px;
+        line-height: 1.8;
+        color: #555;
+        text-align: justify;
+        transition: opacity 1s ease-in-out;
+      }
+    
+      .content-container ul {
+        margin-top: 20px;
+        list-style-type: none;
+        padding: 0;
+      }
+    
+      .content-container li {
+        font-size: 16px;
+        margin: 8px 0;
+        padding-left: 20px;
+        position: relative;
+      }
+    
+      .content-container li::before {
+        content: '•';
+        color: #2d87f0;
+        font-size: 20px;
+        position: absolute;
+        left: 0;
+        top: 0;
+      }
+    
+      /* Animation effect for the introduction */
+      .content-container p {
+        font-size: 18px;
+        line-height: 1.6;
+        color: #444;
+        transition: opacity 0.8s ease-in-out;
+      }
+    
+      .content-container ul li {
+        padding-left: 30px;
+        position: relative;
+        margin: 10px 0;
+      }
+    
+      .content-container ul li::before {
+        content: '•';
+        position: absolute;
+        left: 0;
+        top: 0;
+        color: #ff6347;
+        font-size: 20px;
+        animation: bounce 1s infinite;
+      }
+    
+      /* Bounce effect for bullet points */
+      @keyframes bounce {
+        0% { transform: translateY(0); }
+        50% { transform: translateY(-5px); }
+        100% { transform: translateY(0); }
+      }
+    
+      /* Smooth transition for the sidebar toggle */
+      .content-container a {
+        color: #2d87f0;
+        text-decoration: none;
+        font-weight: bold;
+        transition: color 0.3s ease;
+      }
+    
+      .content-container a:hover {
+        color: #080bd8;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="title-container">
+      Analysis of Gold Price Trends and Sentiment
+    </div>
+    <section class="sidebar">
+      <div class="nav-header">
+        <p class="logo">Gold Price Trends and Sentiments Analysis </p>
+        <i class="bx bx-menu btn-menu"></i>
+      </div>
+      <ul class="nav-links">
+        <li>
+          <i class="bx bx-search search-btn"></i>
+          <input type="text" placeholder="search..." />
+          <span class="tooltip">Search</span>
+        </li>
+        <li>
+          <a href="#" onclick="showIntroduction()">
+            <i class="bx bx-home-alt-2"></i>
+            <span class="title">Introduction</span>
+          </a>
+          <span class="tooltip">Introduction</span>
+        </li>
+        <li>
+          <a href="#"  onclick="showDataDescription()">
+            <i class="fas fa-file-alt"></i>
+            <span class="title">Data Description</span>
+          </a>
+          <span class="tooltip">Data Description</span>
+        </li>
+        <li>
+          <a href="#" id="priceDirectionLink">
+            <i class="bx bx-line-chart"></i>
+            <span class="title">Price Direction Analysis</span>
+          </a>
+          <span class="tooltip">Price Direction Analysis</span>
+        </li>
+        <li>
+          <a href="#" id="sentimentAnalysisLink">
+            <i  class="bx bx-text"></i>
+            <span class="title">Sentiment Analysis</span>
+          </a>
+          <span class="tooltip">Sentiment Analysis</span>
+        </li>
+        <li>
+          <a href="#" id="priceMovementLink">
+            <i class="bx bx-trending-up"></i>
+            <span class="title">Price Movement Trends</span>
+          </a>
+          <span class="tooltip">Price Movement Trends</span>
+        </li>
+        <li>
+          <a href="#">
+            <i class="bx bx-columns" id="assetComparisonLink" ></i>
+            <span class="title">Asset Comparison Impact</span>
+          </a>
+          <span class="tooltip">Asset Comparison Impact</span>
+        </li>
+        <li >
+            <a href="#"id="pricemovementbreakdownLink">
+              <i class="bx bx-bar-chart"></i>
+              <span class="title">Price Movement-Breakdown</span>
+            </a>
+            <span class="tooltip">Price Movement-Breakdown</span>
+          </li>
+          <li>
+            <a href="#"  onclick="showResults()">
+              <i class="bx bx-check-circle"></i>
+              <span class="title">Results</span>
+            </a>
+            <span class="tooltip">Results</span>
+          </li>
+          <li>
+            <a href="#" onclick="showConclusion()">
+              <i class="fas fa-flag-checkered"></i>
+              <span class="title">Conclusion</span>
+            </a>
+            <span class="tooltip">Conclusion</span>
+          </li>
+      </ul>
+      
+      <div class="theme-wrapper">
+        <i class="bx bxs-moon theme-icon"></i>
+        <p>Dark Theme</p>
+        <div class="theme-btn">
+          <span class="theme-ball"></span>
+        </div>
+      </div>
+    </section>
+   <!-- Introduction Content Container -->
+   <div class="content-container" id="introduction-content">
+    <p>
+      Hi, I am Arnab Bera, MDS202409, a student of Chennai Mathematical Institute. I have created this project on the topic 
+      "Gold Price Trends and Sentiment Analysis". Data collected from Kaggle(<a href="https://www.kaggle.com/datasets/ankurzing/sentiment-analysis-in-commodity-market-gold" class="data-link">Click here</a>).
+      <br><br>
+      The gold dataset (gold_dataset) focuses on analyzing the impact of news articles on gold
+price movements. It contains features such as publication dates, news headlines, and indicators for gold price
+direction (up, down, or constant). Additionally, it includes sentiment labels (positive, negative, or neutral)
+and whether the news references past or future market information. This dataset is ideal for studying the
+relationship between financial news and gold price fluctuations, sentiment analysis, and time-series forecasting
+in the gold market.
+    </p>
+  </div>
+  <!-- Data Description Content Container -->
+<div class="content-container" id="data-description-content">
+  <p>
+    Data Description: The dataset comprises 10,570 entries, capturing various aspects of gold price movements and related news articles. Key columns in this dataset are:
+    <br><br>
+    <ul>
+      <li><strong>1. Dates:</strong> Date of news headline</li>
+      <li><strong>2. URL:</strong> URL of news headline</li>
+      <li><strong>3. News:</strong> News headline</li>
+      <li><strong>4. Price Direction Up:</strong> Does the news headline affect price direction up?</li>
+      <li><strong>5. Price Direction Constant:</strong> Does the news headline affect price direction with no changes?</li>
+      <li><strong>6. Price Direction Down:</strong> Does the news headline affect price direction down?</li>
+      <li><strong>7. Asset Comparison:</strong> Are assets being compared?</li>
+      <li><strong>8. Past Information:</strong> Is the news headline talking about the past?</li>
+      <li><strong>9. Future Information:</strong> Is the news headline talking about the future?</li>
+      <li><strong>10. Price Sentiment:</strong> Price sentiment of gold commodity based on headline</li>
+    </ul>
+    <br>
+    The dataset provides a comprehensive view of how news articles and other factors correlate with the direction and sentiment of gold prices. From the sample data, we observe that the ‘Price Direction Up’ and ‘Price Direction Down’ columns are binary indicators. This dataset is valuable for analyzing the impact of news on gold price trends and could be used to develop predictive models for future price movements based on historical data and sentiment analysis.
+  </p>
+</div>
+<!-- Result -->
+<div class="content-container" id="result-content">
+  <h3>Results:</h3>
+  <ul>
+    <li class="hover-effect" data-tooltip="The price increased more frequently than it decreased.">
+    <strong>Price Movements:</strong> Upward price movements were most frequent, followed by constant, with downward movements being least common.
+    </li>
+    <li class="hover-effect" data-tooltip="Negative news had a clear correlation with price declines.">
+      <strong>Sentiment:</strong> Negative news was strongly linked to price declines, while positive news led to price increases.
+    </li>
+    <li class="hover-effect" data-tooltip="Seasonal trends indicate more frequent downward movements in certain months.">
+      <strong>Time Trends:</strong> September and October had more frequent downward movements, while July and August showed balanced or positive trends.
+    </li>
+    <li class="hover-effect" data-tooltip="Comparing gold with other assets typically resulted in price drops.">
+      <strong>Asset Comparisons:</strong> Comparing gold with other assets often correlated with price drops.
+    </li>
+    <li class="hover-effect" data-tooltip="Negative sentiment had a clear impact on price drops.">
+      <strong>Sentiment Impact:</strong> Negative sentiment was most associated with price drops, positive with price rises, and neutral with constant movements.
+    </li>
+  </ul>
+</div>
+
+<!-- conclusion -->
+ <div class="content-container" id="conclusion-content">
+  <h3>Conclusion:</h3>
+  <p>
+     The analysis of the Gold Dataset revealed several important insights into gold price trends
+and the factors influencing them.Downward price movements were more frequent than upward movements,
+suggesting a bearish tendency during the time period covered by the data.Negative sentiment in news articles was strongly associated withdownward price trends, confirming the role of news sentiment in shaping
+market behavior.Certain months and years showed stronger downward trends, indicating potential seasonal
+or cyclical factors affecting gold prices.The impact of asset comparisons showed that these articles often had
+a negative effect on gold prices, potentially indicating that comparisons with other assets highlighted gold’s
+relative underperformance.
+  </p>
+ </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/shinyjs/2.0.0/shinyjs.min.js"></script>
+
+    <script src="sidebar.js"></script>
+<script src="check.js"></script>
+  </body>
+</html>
